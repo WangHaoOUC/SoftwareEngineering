@@ -44,17 +44,14 @@ int main()
 	//分配内存
 	buffTmp = (GByte*)CPLMalloc(imgXlen * imgYlen * sizeof(GByte));
 	//创建输出图像,poDstDS初始化
-	poDstDS = GetGDALDriverManager()->GetDriverByName("GTiff")->Create
-	(dstPath, imgXlen, imgYlen, bandNum, GDT_Byte, NULL);
+	poDstDS = GetGDALDriverManager()->GetDriverByName("GTiff")->Create(dstPath, imgXlen, imgYlen, bandNum, GDT_Byte, NULL);
 
 	//一个个波段的输入，然后一个个波段的输出
 	//相当于将原来的图片复制了一次
 	for (i = 0; i < bandNum; i++)
 	{
-		poSrcDS->GetRasterBand(i + 1)->RasterIO(GF_Read,
-			0, 0, imgXlen, imgYlen, buffTmp, imgXlen, imgYlen, GDT_Byte, 0, 0);
-		poDstDS->GetRasterBand(i + 1)->RasterIO(GF_Write,
-			0, 0, imgXlen, imgYlen, buffTmp, imgXlen, imgYlen, GDT_Byte, 0, 0);
+		poSrcDS->GetRasterBand(i + 1)->RasterIO(GF_Read, 0, 0, imgXlen, imgYlen, buffTmp, imgXlen, imgYlen, GDT_Byte, 0, 0);
+		poDstDS->GetRasterBand(i + 1)->RasterIO(GF_Write, 0, 0, imgXlen, imgYlen, buffTmp, imgXlen, imgYlen, GDT_Byte, 0, 0);
 	}
 	CPLFree(buffTmp);
 
@@ -62,15 +59,13 @@ int main()
 	{
 		buffTmp = (GByte*)CPLMalloc(tmpXlen * tmpYlen * sizeof(GByte));
 		//依次读取三个通道缓存在buffTmp中
-		poSrcDS->GetRasterBand(x + 1)->RasterIO(GF_Read,
-			StartX1, StartY1, tmpXlen, tmpYlen, buffTmp, tmpXlen, tmpYlen, GDT_Byte, 0, 0);
+		poSrcDS->GetRasterBand(x + 1)->RasterIO(GF_Read, StartX1, StartY1, tmpXlen, tmpYlen, buffTmp, tmpXlen, tmpYlen, GDT_Byte, 0, 0);
 		//遍历区域，逐像素置为255
 		for (j = 0; j < tmpYlen; j++)
 			for (i = 0; i < tmpXlen; i++)
 				buffTmp[j * tmpXlen + i] = (GByte)255;
 		//数据写入poDstDS
-		poDstDS->GetRasterBand(x + 1)->RasterIO(GF_Write,
-			StartX1, StartY1, tmpXlen, tmpYlen, buffTmp, tmpXlen, tmpYlen, GDT_Byte, 0, 0);
+		poDstDS->GetRasterBand(x + 1)->RasterIO(GF_Write, StartX1, StartY1, tmpXlen, tmpYlen, buffTmp, tmpXlen, tmpYlen, GDT_Byte, 0, 0);
 		//清除内存
 		CPLFree(buffTmp);
 	}
@@ -79,15 +74,13 @@ int main()
 	{
 		buffTmp = (GByte*)CPLMalloc(tmpXlen * tmpYlen * sizeof(GByte));
 		//依次读取三个通道缓存在buffTmp中
-		poSrcDS->GetRasterBand(x + 1)->RasterIO(GF_Read,
-			StartX2, StartY2, tmpXlen, tmpYlen, buffTmp, tmpXlen, tmpYlen, GDT_Byte, 0, 0);
-		//遍历区域，逐像素置为255
+		poSrcDS->GetRasterBand(x + 1)->RasterIO(GF_Read, StartX2, StartY2, tmpXlen, tmpYlen, buffTmp, tmpXlen, tmpYlen, GDT_Byte, 0, 0);
+		//遍历区域，逐像素置为0
 		for (j = 0; j < tmpYlen; j++)
 			for (i = 0; i < tmpXlen; i++)
 				buffTmp[j * tmpXlen + i] = (GByte)0;
 		//数据写入poDstDS
-		poDstDS->GetRasterBand(x + 1)->RasterIO(GF_Write,
-			StartX2, StartY2, tmpXlen, tmpYlen, buffTmp, tmpXlen, tmpYlen, GDT_Byte, 0, 0);
+		poDstDS->GetRasterBand(x + 1)->RasterIO(GF_Write, StartX2, StartY2, tmpXlen, tmpYlen, buffTmp, tmpXlen, tmpYlen, GDT_Byte, 0, 0);
 		//清除内存
 		CPLFree(buffTmp);
 	}
